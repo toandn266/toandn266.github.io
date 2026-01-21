@@ -707,6 +707,52 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+
+        .momo-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 2000;
+        }
+
+        .momo-modal.show {
+            display: block;
+        }
+
+        .momo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .momo-content {
+            position: relative;
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            margin: 10vh auto;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        .momo-content img {
+            width: 100%;
+            border-radius: 15px;
+            margin-top: 15px;
+        }
+
+        .momo-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            border: none;
+            background: none;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -760,6 +806,19 @@
         <span class="toast-message" id="toastMessage">Cảm ơn bạn đã nuôi tôi!</span>
     </div>
 
+    <!-- Modal -->
+    <div class="momo-modal" id="momoModal">
+        <div class="momo-overlay" onclick="closeMomoModal()"></div>
+        <div class="momo-content">
+            <button class="momo-close" onclick="closeMomoModal()">×</button>
+            <h3>📱 Quét QR để nuôi tôi</h3>
+            <img id="momoQrImage" src="" alt="QR IMG">
+            <p style="margin-top:10px;color:#636e72;font-size:0.9rem">
+                <3 iu 💜
+            </p>
+        </div>
+    </div>
+
     <script>
      
         const CONFIG = {
@@ -800,43 +859,43 @@
                     amount: 10000,
                     emoji: "🥤",
                     description: "1 ly trà đá",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/olejYKWqoEOzdjN"
+                    momoLink: "img/10k.jpg"
                 },
                 {
                     amount: 30000,
                     emoji: "🍜",
                     description: "1 tô phở",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/QBeXQlBoZpngayK"
+                    momoLink: "img/30k.jpg"
                 },
                 {
                     amount: 50000,
                     emoji: "☕",
                     description: "Cà phê 1 tuần",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/QBeXQlBoNny5ayK",
+                    momoLink: "img/50k.jpg",
                     isDefault: true  // Mức mặc định được chọn sẵn
                 },
                 {
                     amount: 100000,
                     emoji: "🍕",
                     description: "Pizza party",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/K9b6WNpR3p29dEv"
+                    momoLink: "img/100k.jpg"
                 },
                 {
                     amount: 200000,
                     emoji: "🎮",
                     description: "1 game mới",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/MYer2oWRLQY4eOB"
+                    momoLink: "img/200k.jpg"
                 },
                 {
                     amount: 500000,
                     emoji: "💎",
                     description: "VIP Supporter",
-                    momoLink: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/KQe16Nkr0GwZaJY"
+                    momoLink: "img/500k.jpg"
                 }
             ],
             
             // Default link
-            momoFallback: "https://me.momo.vn/X5IzT8s5iQu9tdsGtvUMtK/QBeXQlBoNny5ayK",
+            momoFallback: "img/50k.jpg",
             
 			// Ds donate
             recentDonations: [
@@ -870,7 +929,7 @@
         let selectedAmount = CONFIG.donationOptions.find(opt => opt.isDefault)?.amount || CONFIG.donationOptions[0].amount;
 
         // Get MoMo link by amount
-        function getMoMoLink(amount) {
+        function getMoMoImage(amount) {
             const option = CONFIG.donationOptions.find(opt => opt.amount === amount);
             return option?.momoLink || CONFIG.momoFallback;
         }
@@ -1038,9 +1097,9 @@
 
         // Donate button click
         donateBtn.addEventListener('click', () => {
-            const momoLink = getMoMoLink(selectedAmount);
-            showToast('Đang mở MoMo... 💜', '📱');
-            window.open(momoLink, '_blank');
+            const momoImage = getMoMoImage(selectedAmount);
+            showToast('Cám ơn bạn nha 💜', '📱');
+            openMomoModal(momoImage);
         });
 
         // Easter egg: Konami code
@@ -1066,6 +1125,20 @@
                 document.head.appendChild(style);
             }
         });
+
+        // MoMo Modal
+        const momoModal = document.getElementById('momoModal');
+        const momoQrImage = document.getElementById('momoQrImage');
+
+        function openMomoModal(imageUrl) {
+            momoQrImage.src = imageUrl;
+            momoModal.classList.add('show');
+        }
+
+        function closeMomoModal() {
+            momoModal.classList.remove('show');
+        }
+
     </script>
 </body>
 </html>
